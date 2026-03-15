@@ -10,4 +10,4 @@ Hi there, I'm Sammy 👋 I am a Master's student currently specialising in **Spa
 * Currently based in Germany :de:
 * Program: Erasmus
 ## How to reach me
-:mailbox:Email: shan-shan.chen@charite.de 
+📬 Email: shan-shan.chen@charite.de 
