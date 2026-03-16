@@ -18,6 +18,3 @@
 # We are going to use notebooks for some python
 # * basic types
 # * flow control
-
-# %%
-# hello
