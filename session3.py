@@ -112,8 +112,11 @@ pyplot.ylabel("y")
 pyplot.title("Here is the title") # add title
 
 # %%
-pyplot.plot(time,absorption, linewidth = 0.5)
+#pulse data I loaded earlier
+pyplot.plot(time,absorption, linewidth = 1.0)
 pyplot.ylabel('Absorption')
 pyplot.xlabel('Time')
 pyplot.title('Pulse')
 pyplot.show()
+
+# %%
