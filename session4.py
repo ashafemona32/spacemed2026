@@ -1,6 +1,6 @@
 # ---
 # title: "Session 4: Reproducible Documents"
-# author: Magnus Hagdorn
+# author: Magnus Hagdorn; Shan-Shan Chen
 # format:
 #   html:
 #     code-fold: true
@@ -31,11 +31,18 @@
 # # Session4
 # Today, we are going to learn how to design algorithm, including:
 # * What is Reproducible Documents and how to create/publish them with quarto
-# * 
-# * 
+# * Write metadata for Reproducible Documents (above cell)
+# * How to create array with different numpy attributes and method
+# * Design an stremlined algorithm（Use ECG as example)
+#
 # Note: This notebook is copied and modified from session3
 
 # %% [markdown]
+# ## Example content of Reproducible document
+# In this example, formula can be easily handled by Markdown
+
+# %% [markdown]
+# ---
 # # Rocket Equation
 # At time $t_0$ to rocket starts to expel gas at a
 # constant mass flow rate $R$ meassured in kg/s
@@ -46,8 +53,10 @@
 # $$ {#eq-rocket-acc}
 # Integrating both sides of @eq-rocket-acc from 0
 # to $T$ we get
+#
 
 # %% [markdown]
+# ---
 # ## Open the file
 
 # %%
@@ -94,23 +103,23 @@ pyplot.title('Pulse')
 pyplot.show()
 
 # %% [markdown]
-# # Array
+# ## Python Array
 
 # %%
 a = numpy.array([1,2,3,4,5])
 print(a)
 
 # %%
-a.shape
+a.shape #return array dimensions in () -> tuple
 
 # %%
 a.dtype
 
 # %%
-a.nbytes
+a.nbytes #total memory consumption 
 
 # %%
-a = numpy.array([1,2,3,4,5],dtype=float)
+a = numpy.array([1,2,3,4,5],dtype=float) #assign data type
 print(a)
 
 # %%
@@ -123,7 +132,7 @@ print(c)
 c.shape
 
 # %%
-d = numpy.arange(0,10)+1
+d = numpy.arange(0,10)+1 #plus one will apply to every single element
 print(d)
 d.shape
 
@@ -134,7 +143,9 @@ d.dtype
 d.nbytes
 
 # %%
-d.T @ d #'@'means vector product 
+d.T @ d 
+#'T'means transpose of array
+#'@'means vector product 
 
 # %%
 e = numpy.logspace(1,10,10)
@@ -162,7 +173,7 @@ d.shape
 a
 
 # %%
-numpy.max(a)
+numpy.max(a) # what is the maximum in array
 
 # %%
 numpy.argmax(a) # where maximum occurs
@@ -175,6 +186,8 @@ numpy.argmax(a) # where maximum occurs
 
 # %%
 w = 50
+# setting 50 means I expect the peaks 
+# will be at least 100 points apart
 num_pnts = 1000
 
 # %%
@@ -186,15 +199,22 @@ peaks = []
 subset = absorption[:num_pnts]
 
 # %%
+#Algorithm -- finding the peaks
 for i in range(len(subset)):
-    start = max(i-w, 0)
+    # look w points to the left from my current point i
+    # but start point must be 0 (no less then 0)
+    start = max(i-w, 0) 
+    # look w points to the right from my current point i
+    # but end points must less then total data points
     end = min(i+w, len(subset))
     window = subset[start:end]
+    #find the location maximum point in the window
     max_pos = numpy.argmax(window) + start
+    #append max. point only when current point is that point
     if i == max_pos:
         peaks.append(i)
 print(peaks)
-    
+
 
 # %%
 pyplot.plot(subset)
@@ -204,6 +224,8 @@ pyplot.plot(peaks, subset[peaks], "ro")
 pyplot.show()
 
 # %%
+#apply to the whole dataset
+peaks = []
 for i in range(len(absorption)):
     start = max(i-w, 0)
     end = min(i+w, len(absorption))
@@ -212,7 +234,7 @@ for i in range(len(absorption)):
     if i == max_pos:
         peaks.append(i)
 print(peaks)
-    
+
 
 # %%
 pyplot.plot(absorption)
@@ -221,6 +243,31 @@ pyplot.ylabel("absorption")
 pyplot.plot(peaks, absorption[peaks], "ro")
 pyplot.show()
 
+# %% [markdown]
+# ### The logic we discussed before instruction
+# check the locations where signal transitions from positive to negative, 
+# and minimize noice by using a defined amplitude threshold
+
+# %%
+peaks = []
+for i in range(1,len(absorption)-1):
+    if (absorption[i+1] - absorption[i] < 0) and (absorption[i] - absorption[i-1] > 0):
+        if absorption[i] > 2500:  
+            peaks.append(i)
+
+# %%
+print(peaks)
+
+# %%
+pyplot.plot(absorption)
+pyplot.xlabel("time[s]")
+pyplot.ylabel("absorption")
+pyplot.plot(peaks, absorption[peaks], "go")
+pyplot.show()
+
+# %% [markdown]
+# ## HR Calculation
+
 # %%
 time_peaks = time[peaks]
 
@@ -228,16 +275,7 @@ time_peaks = time[peaks]
 delta_t = time_peaks[1:] - time_peaks[:-1]
 
 # %%
-hr = 60 / delta_t
+hr = 60 / delta_t #formula of Heart rate
 
 # %%
 pyplot.plot(hr)
-
-# %%
-peaks = []
-for i in len(absorption):
-    if i+1 - i < 0:
-        p = absorption[i]
-        p_pos = i
-        peaks.append(absorption[i])
-        
