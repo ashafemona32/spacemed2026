@@ -1,6 +1,6 @@
 # ---
 # title: "Session 4: Reproducible Documents"
-# author: Magnus Hagdorn; Shan-Shan Chen
+# author: Magnus Hagdorn ; Shan-Shan, Chen
 # format:
 #   html:
 #     code-fold: true
@@ -33,7 +33,7 @@
 # * What is Reproducible Documents and how to create/publish them with quarto
 # * Write metadata for Reproducible Documents (above cell)
 # * How to create array with different numpy attributes and method
-# * Design an stremlined algorithm（Use ECG as example)
+# * Design an algorithm
 #
 # Note: This notebook is copied and modified from session3
 
@@ -42,8 +42,7 @@
 # In this example, formula can be easily handled by Markdown
 
 # %% [markdown]
-# ---
-# # Rocket Equation
+# ### Rocket Equation
 # At time $t_0$ to rocket starts to expel gas at a
 # constant mass flow rate $R$ meassured in kg/s
 # and exhaust velocity relative to the rocket 
@@ -53,10 +52,8 @@
 # $$ {#eq-rocket-acc}
 # Integrating both sides of @eq-rocket-acc from 0
 # to $T$ we get
-#
 
 # %% [markdown]
-# ---
 # ## Open the file
 
 # %%
@@ -249,11 +246,11 @@ pyplot.show()
 # and minimize noice by using a defined amplitude threshold
 
 # %%
-peaks = []
+peak = []
 for i in range(1,len(absorption)-1):
     if (absorption[i+1] - absorption[i] < 0) and (absorption[i] - absorption[i-1] > 0):
         if absorption[i] > 2500:  
-            peaks.append(i)
+            peak.append(i)
 
 # %%
 print(peaks)
@@ -262,7 +259,7 @@ print(peaks)
 pyplot.plot(absorption)
 pyplot.xlabel("time[s]")
 pyplot.ylabel("absorption")
-pyplot.plot(peaks, absorption[peaks], "go")
+pyplot.plot(peak, absorption[peak], "go")
 pyplot.show()
 
 # %% [markdown]
@@ -279,3 +276,4 @@ hr = 60 / delta_t #formula of Heart rate
 
 # %%
 pyplot.plot(hr)
+pyplot.show()
