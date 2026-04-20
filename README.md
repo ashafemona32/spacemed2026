@@ -1,4 +1,4 @@
-# Welcome to 2026 Course of 
+# Welcome to 2026 Course of Data Literacy 
 
 This file uses [markdown](https://www.markdownguide.org/). Checkout the
 [cheat sheet](https://www.markdownguide.org/cheat-sheet/) for a summary
