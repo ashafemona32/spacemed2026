@@ -25,5 +25,5 @@ heart rate metrics.
 |`findPeaks(time, absoprtion)` |Uses signal processing to identify local maxima (peaks).|
 |`calHR(time, peaks)`|Calculates heart rate based on the time intervals between peaks.  |
 
-##Current version
+## Current version
 Current version is `0.0.1`.
