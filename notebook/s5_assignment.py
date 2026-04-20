@@ -28,7 +28,7 @@ from scipy.signal import find_peaks
 # ## Find the Peaks
 
 # %%
-ecg = pandas.read_csv('data/pulse_data.csv')
+ecg = pandas.read_csv('..data/pulse_data.csv')
 
 # %%
 ecg.head()
@@ -51,6 +51,12 @@ pyplot.xlabel('Times(s)')
 pyplot.ylabel('Absorption')
 pyplot.title('Absorption with Peaks')
 pyplot.plot(time[peaks], absorption[peaks], "rx")
+
+# %%
+ecg.mean()
+
+# %%
+ecg.std()
 
 # %% [markdown]
 # ## HR calculation

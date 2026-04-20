@@ -11,3 +11,19 @@ Hi there, I'm Sammy 👋 I am a Master's student currently specialising in **Spa
 * Program: Erasmus
 ## How to reach me
 📬 Email: shan-shan.chen@charite.de 
+
+# In this course we developed a package -- spacemed
+`spacemed` is a Python package designed for processing and analyzing medical pulse data.
+It provides tools to load raw signal data, detect physiological peaks,and calculate
+heart rate metrics.
+
+## Core Function of spacemed
+
+|Function               |Description                                                    |
+|-----------------------|---------------------------------------------------------------|
+|`readPulse(file_name) `|Reads a CSV file and returns `time`  and `absorption` lists.   |
+|`findPeaks(time, absoprtion)` |Uses signal processing to identify local maxima (peaks).|
+|`calHR(time, peaks)`|Calculates heart rate based on the time intervals between peaks.  |
+
+##Current version
+Current version is `0.0.1`.
