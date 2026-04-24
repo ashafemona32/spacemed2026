@@ -17,13 +17,14 @@ Hi there, I'm Sammy 👋 I am a Master's student currently specialising in **Spa
 It provides tools to load raw signal data, detect physiological peaks,and calculate
 heart rate metrics.
 
-## Core Function of spacemed
+## Core Functions of spacemed
 
 |Function               |Description                                                    |
 |-----------------------|---------------------------------------------------------------|
-|`readPulse(file_name) `|Reads a CSV file and returns `time`  and `absorption` lists.   |
-|`findPeaks(time, absoprtion)` |Uses signal processing to identify local maxima (peaks).|
-|`calHR(time, peaks)`|Calculates heart rate based on the time intervals between peaks.  |
+|`readPulse(file_name)` |Reads a CSV file and returns `time`  and `absorption` lists.   |
+|`findPeaks(time, absorption)` |Uses signal processing to identify local maxima (peaks).|
+|`calHR(time, peaks)` |Calculates heart rate based on the time intervals between peaks.  |
+|`plotHR(hr)` |Plot heart rates with x,y labels and a title.|
 
 ## Current version
 Current version is `0.0.1`.

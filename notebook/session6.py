@@ -31,20 +31,6 @@
 # Note: This notebook is copied and modified from session4
 
 # %% [markdown]
-# ## Open the file
-# Since we moved all the notebooks to another directory, I have to change data paths
-
-# %%
-# !pwd # check current working directory so that you can commit the path when opening a file
-
-# %%
-aFile = open ('/home/shch14/spaceMed2026/shch14/data/pulse_data.csv', 'r') # you can type the whole path
-
-# %%
-aFile = open ('../data/pulse_data.csv', 'r') # or just type ..
-
-
-# %% [markdown]
 # ## Function
 
 # %%
@@ -74,106 +60,38 @@ print(name, age, sep=" is ") # assign the seperater
 # %%
 print(name, age, sep=" is ", end=".") # assign the end
 
+# %% [markdown]
+# ## Use my spacemed function for Pulse Data Analysis!
+# Here I used the `spacemed` package (containing functions built in Session 4) to process raw pulse signal data and visualize heart rate over time.
 
 # %% [markdown]
-# ## Exercise
-# * move the data loader to a function called read_pulse
-# * move the peak finding code to a function called
-# find_peaks
-# * move the heart rate calculation to a function called
-# calc_heart_rate
-# * and use those functions in the notebook
-
-# %%
-def read_pulse(file_name):
-    aFile = open (file_name, 'r')
-    aFile.readline()
-    # read it so that we skip the firt line (or start the loop from second line)
-    time = []
-    absorption = []
-    for line in aFile.readlines():
-        line = line.split(",")
-        time.append(float(line[0]))
-        absorption.append(float(line[1]))
-    for i in range(10):
-        print(time[i], absorption[i]) # I should return time and absorption!
-
-
-
-# %%
-read_pulse('../data/pulse_data.csv')
-
-
-# %%
-#answer
-def readPulse(fname):
-    dataFile = open (fname, 'r')
-    dataFile.readline()
-    time = []
-    absorption = []
-    for line in dataFile.readlines():
-        line = line.split(",")
-        time.append(float(line[0]))
-        absorption.append(float(line[1]))
-        
-    return time, absorption
-
-
-# %%
-time, absorption = readPulse('../data/pulse_data.csv')
-
-
-# %%
-def findPeaks(time, absorption, w=50):
-    w = w
-    peaks = []
-    for i in range(len(absorption)):
-      start = max(i-w, 0)
-      end = min(i+w, len(absorption))
-      window = absorption[start:end]
-      max_pos = numpy.argmax(window) + start
-      if i == max_pos:
-        peaks.append(i)
-    return peaks
-
-
-# %%
-peaks = find_peaks(time, absorption)
-
-
-# %%
-def calc_heart_rate(time, peaks):
-    time = numpy.array(time)
-    time_peaks = time[peaks]
-    delta_t = time_peaks[1:] - time_peaks[:-1]
-    hr = 60 / delta_t
-    return hr
-
-
-# %%
-hr = calc_heart_rate(time, peaks)
-
-# %%
-pyplot.plot(hr)
-pyplot.show()
-
-# %% [markdown]
-# ## Use my spacemed fucntion!
+# **First step:** Imports the `spacemed` and uses `readPulse` to read absorption data.
 
 # %%
 import spacemed
 
 # %%
-spacemed.__version__
+spacemed.__version__ # check version of my package
 
 # %%
-time, absorption = spacemed.readPulse('../data/pulse_data.csv')
+time, absorption = spacemed.readPulse('../data/pulse_data.csv') #.. means previous directory
+
+# %% [markdown]
+# **Second step:** Uses `findPeaks` function to identify signal peaks within the pulse data.
 
 # %%
-Peaks = spacemed.findPeaks(time, absorption)
+peaks = spacemed.findPeaks(time, absorption) # window(w) is default vaulue (50)
+
+# %% [markdown]
+# **Third step:** Uses `calR` function to compute the heart rate (BPM) based on the timing of detected peaks.
 
 # %%
 hr = spacemed.calHR(time, peaks)
 
+# %% [markdown]
+# **Fourth step:** Uses `plotHR` to generate a plot of the calculated heart rates.
+
 # %%
-pyplot.plot(hr)
+spacemed.plotHR(hr) #x,y labels and title are default strings
+
+# %%
