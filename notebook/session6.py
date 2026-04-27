@@ -69,6 +69,7 @@ print(name, age, sep=" is ", end=".") # assign the end
 
 # %%
 import spacemed
+import numpy
 
 # %%
 spacemed.__version__ # check version of my package
@@ -93,5 +94,40 @@ hr = spacemed.calHR(time, peaks)
 
 # %%
 spacemed.plotHR(hr) #x,y labels and title are default strings
+
+# %%
+absorption = numpy.array(absorption)
+
+# %%
+from matplotlib import pyplot
+pyplot.plot(absorption, linewidth = 1.0)
+pyplot.xlabel("time[s]")
+pyplot.ylabel("absorption")
+pyplot.plot(peaks, absorption[peaks], "rx")
+pyplot.show()
+
+# %%
+#creat a big frame with three figures 3*1
+frame, fig = pyplot.subplots(3, 1, figsize=(12, 12))
+# the first one is raw signal
+fig[0].plot(time, absorption, linewidth=1.0)
+fig[0].set_title('1. Raw Absorption signal')
+fig[0].set_xlabel('Time(s)')
+fig[0].set_ylabel('Absorption')
+
+# the second one is raw data with peaks
+fig[1].plot( absorption, linewidth=1.0)
+fig[1].plot(peaks, absorption[peaks], 'rx', markersize = 5)
+fig[1].set_title('2. Absorption with Peaks')
+fig[1].set_xlabel('Time(s)')
+fig[1].set_ylabel('Absorption')
+
+# the third one is HR
+fig[2].plot(hr)
+fig[2].set_title('3. Heart Rate')
+fig[2].set_xlabel('Time(s)')
+fig[2].set_ylabel('BPM')
+
+pyplot.tight_layout()
 
 # %%
