@@ -25,7 +25,7 @@ print(pandas.__version__)
 # %%
 #read the dataframe
 station_ids = pandas.read_csv(
-"data/Niederschlag_1981-2010_Stationsliste.txt",
+"../data/Niederschlag_1981-2010_Stationsliste.txt",
 delimiter=" *; *",
 encoding = "iso-8859-1",
 index_col="Stations_id",

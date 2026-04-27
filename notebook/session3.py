@@ -27,7 +27,7 @@
 # !pwd # check current working directory so that you can omit the path when openning a file
 
 # %%
-aFile = open ('data/pulse_data.csv', 'r')
+aFile = open ('../data/pulse_data.csv', 'r')
 
 # %% [markdown]
 # ## Extract your data
