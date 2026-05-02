@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this package, please cite it as below."
+authors:
+  - family-names: "Chen"
+    given-names: "Shan-Shan"
+title: "Heart Rate Analysis Package"
+version: 0.0.1
+date-released: 2026-05-02
+license: GPL-3.0
