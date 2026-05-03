@@ -2,7 +2,7 @@
 **/*.html
 **/*.pdf
 /session4_files
-
+/public
 # Python bytecode (created when you run your functions)
 __pycache__/
 *.py[cod]

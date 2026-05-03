@@ -1,4 +1,4 @@
-# Summary and reflection
+# Session7 Reflection
 In this session, we learned how to make our package executable through a command-line
 interface and how to generate professional documentation. Honestly, I’m surprised by how far
 we’ve made it! Before this class, even though I had learned some basic Python, I never knew 
