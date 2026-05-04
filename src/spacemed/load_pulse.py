@@ -1,5 +1,5 @@
 def readPulse(fname):
-    dataFile = open (fname, 'r')
+    dataFile = open(fname, 'r')
     dataFile.readline()
     time = []
     absorption = []

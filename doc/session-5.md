@@ -1,12 +1,12 @@
+# Session5 Reflection
 
-# Summary
+## Summary
 Today, we learned how to build a virtual environment and manage software packages via 
 Conda. This is important to keep our research tools organized and avoid system conflicts.
 Following that, we were introduced to Pandas and learned how to perform data operations, 
 calculation, and visualization. We used a real dataset as our material to analyze the 
 precipitation at Alexanderplatz, Berlin, and practiced the skills above.
-
-# Reflection
+## Reflection
 Today’s session was solid, and I am excited to be using real datasets to learn data analysis
 for the first time in Python. However, I found it a bit challenging to follow the steps without 
 fully understanding the context of the data first. I think it would be helpful to have more time

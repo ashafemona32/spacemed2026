@@ -1,3 +1,4 @@
+# Session1 Reflection
 In this session, I leared how to use Shell and Git. I had hear about them before, but I have never really used them. 
 I think they are interesting, but thay are also a little complicated for me right now, especially Git.
 I don't fully understand version management yet or why it is so important.

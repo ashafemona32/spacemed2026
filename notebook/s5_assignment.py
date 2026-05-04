@@ -28,7 +28,7 @@ from scipy.signal import find_peaks
 # ## Find the Peaks
 
 # %%
-ecg = pandas.read_csv('..data/pulse_data.csv')
+ecg = pandas.read_csv('../data/pulse_data.csv')
 
 # %%
 ecg.head()

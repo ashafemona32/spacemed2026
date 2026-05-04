@@ -1,4 +1,4 @@
-# Summary and Reflection
+# Session6 Reflection
 Today’s SpaceMed session was anything but boring! We started by mastering Python Functions,
 which really felt like opening a new door! Now I can customize my own specific tools for any
 task. We then moved on to Packaging. I’ll admit, setting up multiple files like pyproject.toml and
