@@ -24,7 +24,8 @@ heart rate metrics.
 |`readPulse(file_name)` |Reads a CSV file and returns `time`  and `absorption` lists.   |
 |`findPeaks(time, absorption)` |Uses signal processing to identify local maxima (peaks).|
 |`calHR(time, peaks)` |Calculates heart rate based on the time intervals between peaks.  |
-|`plotHR(hr)` |Plot heart rates with x,y labels and a title.|
+|`plotHR(hr)` |Plot heart rates with x, y labels and a title.|
+|`fmriCross(input_sig, output_fmri, voxel_num)` | Computes cross-correlation between the input signal and voxel time series, returning correlation and time lag.|
 
 ## Current version
 Current version is `0.0.1`.
