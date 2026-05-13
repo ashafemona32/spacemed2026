@@ -21,4 +21,5 @@ sdist/
 var/
 wheels/
 *.egg-info/
-
+/logs
+.out
