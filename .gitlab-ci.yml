@@ -10,7 +10,6 @@ pylint:
     - pip install -U flake8
     - python -m flake8
 
-
 package:
   stage: deploy
   only:
