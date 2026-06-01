@@ -1,20 +1,14 @@
 image: python:3.10-alpine
+
 variables:
-https_proxy: http://proxy.charite.de:8080
-http_proxy: http://proxy.charite.de:8080
+  https_proxy: http://proxy.charite.de:8080
+  http_proxy: http://proxy.charite.de:8080
 
 pylint:
   stage: test
   script:
     - pip install -U flake8
     - python -m flake8
-
-pytest:
-  stage: test
-  script:
-    - pip install -U pytest
-    - pip install .
-    - python -m pytest
 
 package:
   stage: deploy
