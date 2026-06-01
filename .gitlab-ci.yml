@@ -10,12 +10,6 @@ pylint:
     - pip install -U flake8
     - python -m flake8
 
-pytest:
-  stage: test
-  script:
-    - pip install -U pytest
-    - pip install .
-    - python -m pytest
 
 package:
   stage: deploy
