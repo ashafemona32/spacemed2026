@@ -18,10 +18,10 @@ Hi, I'm **Sammy (Shan-Shan) Chen** 👋
 | Function | Input/Parameters | Description |
 | :--- | :--- | :--- |
 | `readPulse` | `file_name` | Efficiently parses raw physiological data (CSV) and extracts time-series matrices (`time`, `absorption`). |
-| `findPeaks` | `time`, `absorption` | Applies digital signal processing (DSP) algorithms to identify local maxima (physiological peaks) and filter artifacts. |
-| `calHR` | `time`, `peaks` | Quantifies instantaneous heart rate metrics based on inter-beat intervals (IBI). |
-| `plotHR` | `hr` | Generates standardized, publication-ready visual plots for physiological timelines. |
-| `fmriCross` | `input_sig`, `output_fmri`, `voxel_num` | Computes mathematical **cross-correlation and time lags** between peripheral physiological signals and fMRI voxel time series (crucial for BOLD signal artifact removal and coupling analysis). |
+| `findPeaks` | `time`, `absorption` | Applies digital signal processing algorithms to identify local maxima (physiological peaks) and filter artifacts. |
+| `calHR` | `time`, `peaks` | Quantifies instantaneous heart rate metrics based on inter-beat intervals. |
+| `plotHR` | `hr` | Generates visual plots for physiological timelines. |
+| `fmriCross` | `input_sig`, `output_fmri`, `voxel_num` | Computes mathematical **cross-correlation and time lags** between peripheral physiological signals and fMRI voxel time series. |
 
 *Current Release Version: `0.0.3`*
 
@@ -31,7 +31,7 @@ Hi, I'm **Sammy (Shan-Shan) Chen** 👋
 
 ### Cardiorespiratory Dynamics: ECG Signal Processing
 *   **Overview:** Developed a complete end-to-end processing pipeline to transform noisy, raw ECG voltage signals into clean, analyzed data structures.
-*   **My Technical Contribution:** Responsible for the entire technical implementation, including pipeline engineering, digital signal processing (DSP), and the complete Python notebook development using `Neurokit2` to extract Heart Rate Variability (HRV) indices.
+*   **My Technical Contribution:** Responsible for the entire technical implementation, including pipeline engineering, digital signal processing, and the complete Python notebook development using `Neurokit2` to extract Heart Rate Variability (HRV) indices.
 *   **Team Credits:** Team members contributed to the literature review and written research proposal report.
 
 ### Advanced Biostatistics & Predictive Modeling (R Framework)
