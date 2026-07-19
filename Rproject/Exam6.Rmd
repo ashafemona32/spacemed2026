@@ -1,0 +1,655 @@
+---
+title: "Exam 6"
+author: "Alice, Kseniia, ShanShan"
+date: "02 06 2026"
+output:
+  html_document:
+    toc: true
+    toc_depth: 1
+    number_sections: true
+  pdf_document:
+    toc: true
+    toc_depth: '1'
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Environment setting
+```{r}
+#plotting for all task
+if (!require("ggplot2")) { install.packages("ggplot2"); library("ggplot2") }
+
+#imputation data for task5 
+if (!require("mice")) { install.packages("mice"); library("mice") } 
+
+#different logistic models comparison for task5
+if (!require("sjPlot")) { install.packages("sjPlot"); library("sjPlot") } 
+
+#Variance Inflation Factor (VIF) diagnostics for task5
+if (!require("car")) { install.packages("car"); library("car") } 
+
+#regression summaries for task5
+if (!require("gtsummary")) { install.packages("gtsummary"); library("gtsummary") }
+
+#ROC and AUC analysis for task5
+if (!require("pROC")) { install.packages("pROC"); library("pROC") }
+
+#machine learning for task5
+if (!require("randomForest")) { install.packages("randomForest"); library("randomForest") }
+ 
+```
+
+# Task 1
+1. Load and clean the data sets. Give an overview over the different variables analyze them descriptively.
+2. Analyze the differences between the genders descriptively.
+```{r task1}
+
+# 1.1 load and clean the datasets
+dat1 <- read.csv("Exam_6_1.csv")
+summary(dat1)
+
+# uppercase all names
+dat1$Name <- toupper(dat1$Name)
+# fix the comma instead of dot issue
+dat1$Billing.Amount <- gsub(",", ".", dat1$Billing.Amount)
+# set negative values of billing amount as NA
+dat1$Billing.Amount[dat1$Billing.Amount < 0] = NA
+
+# omit first column
+dat1 <- dat1[, -1]
+
+# find and remove duplicates
+sum(duplicated(dat1))
+dat1 <- dat1[!duplicated(dat1), ]
+
+# fix variable type
+dat1$Date.of.Admission <- as.Date(dat1$Date.of.Admission, "%Y-%m-%d")
+dat1$Discharge.Date <- as.Date(dat1$Discharge.Date, "%Y-%m-%d")
+dat1$Admission.Type <- as.factor(dat1$Admission.Type)
+dat1$Blood.Type <- as.factor(dat1$Blood.Type)
+dat1$Gender <- as.factor(dat1$Gender)
+dat1$Doctor <- as.factor(dat1$Doctor)
+dat1$Name <- as.factor(dat1$Name)
+dat1$Insurance.Provider <- as.factor(dat1$Insurance.Provider)
+dat1$Medical.Condition <- as.factor(dat1$Medical.Condition)
+dat1$Test.Results <- as.factor(dat1$Test.Results)
+dat1$Room.Number <- as.factor(dat1$Room.Number)
+dat1$Billing.Amount <- as.numeric(dat1$Billing.Amount)
+dat1$Medication <- as.factor(dat1$Medication)
+
+# calculate duration of hospitalization
+dat1$Duration.of.Hospitalization <- as.numeric(dat1$Discharge.Date - dat1$Date.of.Admission)
+
+# remove all missing values
+clean_dat1 <- na.omit(dat1) 
+summary(clean_dat1)
+
+# load and clean data2
+dat2 <- read.csv("Exam_6_2.csv")
+summary(dat2)
+
+# fix variable types
+dat2$patient_id <- as.factor(dat2$patient_id)
+dat2$gender <- as.factor(dat2$gender)
+dat2$ace_inhibitor <- as.factor(dat2$ace_inhibitor)
+dat2$beta_blocker <- as.factor(dat2$beta_blocker)
+dat2$diuretic <- as.factor(dat2$diuretic)
+dat2$income_level <- as.factor(dat2$income_level)
+dat2$readmitted_30d <- as.factor(dat2$readmitted_30d)
+
+# remove values that make no physiological sense
+dat2$creatinine[dat2$creatinine < 0] = NA
+dat2$bmi[dat2$bmi < 12] = NA
+
+# find and remove duplicates
+sum(duplicated(dat2))
+dat2 <- dat2[!duplicated(dat2), ]
+
+# we decided to delete missing data 
+clean_dat2 <- na.omit(dat2) 
+summary(clean_dat2)
+
+# 1.2 Analyze differences between the genders descriptively
+by(clean_dat1, clean_dat1$Gender, summary)
+by(clean_dat2, clean_dat2$gender, summary)
+
+# make the plots for gender differences
+# gender differences in blood type
+
+ggplot(clean_dat1, aes(x = Blood.Type, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Blood Type Distribution by Gender",
+       subtitle = "Analysis of baseline patient demographics",
+       x = "Blood Type", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in medical condition
+ggplot(clean_dat1, aes(x = Medical.Condition, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Medical Condition Distribution by Gender",
+       x = "Medical Condition", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in insurance provider
+ggplot(clean_dat1, aes(x = Insurance.Provider, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Insurance Provider Distribution by Gender",
+       x = "Insurance Provider", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in billing amount
+ggplot(clean_dat1, aes(x = Gender, y = Billing.Amount, fill = Gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Billing Amount Distribution by Gender",
+       x = "Gender", y = "Billing Amount ($)") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences in admission type
+ggplot(clean_dat1, aes(x = Admission.Type, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Admission Type Distribution by Gender",
+       x = "Admission Type", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in Medication
+ggplot(clean_dat1, aes(x = Medication, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Medication Distribution by Gender",
+       x = "Medication", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in Test Results
+ggplot(clean_dat1, aes(x = Test.Results, fill = Gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Test Result Distribution by Gender",
+       x = "Test Results", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences in duration of Hospitalization
+ggplot(clean_dat1, aes(x = Gender, y = Duration.of.Hospitalization, fill = Gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Duration of Hospitalization Distribution by Gender",
+       x = "Gender", y = "Duration of Hospitalization (days)") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences dat2
+ggplot(clean_dat2, aes(x = gender, y = bmi, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Body Mass Index Distribution by Gender",
+       x = "Gender", y = "BMI") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences bnp
+ggplot(clean_dat2, aes(x = gender, y = bnp, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "BNP Distribution by Gender", x = "Gender", y = "BNP") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences sodium
+ggplot(clean_dat2, aes(x = gender, y = sodium, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Sodium Distribution by Gender", x = "Gender", y = "Sodium") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences creatinine
+ggplot(clean_dat2, aes(x = gender, y = creatinine, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Creatinine Distribution by Gender", x = "Gender", y = "Creatinine") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences systolic_bp
+ggplot(clean_dat2, aes(x = gender, y = systolic_bp, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Systolic Blood Pressure Distribution by Gender", x = "Gender", y = "Systolic Blood Pressure (mmHg)") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences heart rate
+ggplot(clean_dat2, aes(x = gender, y = heart_rate, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Heart Rate Distribution by Gender", x = "Gender", y = "Heart Rate (BPM)") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences ace inhibitor
+ggplot(clean_dat2, aes(x = ace_inhibitor, fill = gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "ACE Inhibitor Use Distribution by Gender", x = "ACE Inhibitor Use [1 (YES); 0 (NO)]", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences beta blocker
+ggplot(clean_dat2, aes(x = beta_blocker, fill = gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Beta Blocker Use Distribution by Gender", x = "Beta Blocker Use [1 (YES); 0 (NO)]", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences diuretic
+ggplot(clean_dat2, aes(x = diuretic, fill = gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Diuretic Use Distribution by Gender", x = "Diuretic Use [1 (YES); 0 (NO)]", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences adherence score
+ggplot(clean_dat2, aes(x = gender, y = adherence_score, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Adherence score Distribution by Gender", x = "Gender", y = "Adherence score") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences income level
+ggplot(clean_dat2, aes(x = income_level, fill = gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Income Level Distribution by Gender", x = "Income Level", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+# gender differences distance to hospital
+ggplot(clean_dat2, aes(x = gender, y = distance_to_hospital_km, fill = gender)) +
+  geom_boxplot(width = 0.5, outlier.alpha = 0.4) +
+  theme_bw() + 
+  labs(title = "Distance to Hospital Distribution by Gender", x = "Distance to Hospital (km)", y = "Distance (km)") +
+  theme(legend.position = "none", plot.title = element_text(face = "bold"))
+
+# gender differences readmitted 30 days
+ggplot(clean_dat2, aes(x = readmitted_30d, fill = gender)) +
+  geom_bar(position = "dodge") +
+  theme_bw() + 
+  labs(title = "Patients readmitted after 30 days Distribution by Gender", x = "Readmitted after 30 days [1 (YES); 0 (NO)]", y = "Patient Count") +
+  theme(plot.title = element_text(face = "bold"))
+
+```
+
+# Task 2
+The following tasks refer to: Exam data 6 1.csv
+Investigate the effect of the following variables on the billing amount:
+1. Date of admission
+2. Duration of stay
+3. Medical condition
+```{r task2}
+
+clean_dat1$Admission_Year <- as.factor(format(as.Date(clean_dat1$Date.of.Admission), "%Y"))
+
+# Check the skewness of billing
+hist(clean_dat1$Billing.Amount, 
+     probability = TRUE, 
+     breaks = 50, 
+     main = "Distribution of Billing Amounts", 
+     xlab = "Total Billing Amount", 
+     col = "lightgray")
+lines(density(clean_dat1$Billing.Amount, na.rm = TRUE), col = "red",  lwd = 2)
+
+
+# First visualize the data
+par(mfrow = c(1, 3))
+
+plot(Billing.Amount ~ Admission_Year, data = clean_dat1, 
+     main = "Billing by Year", col = "#E87D72")
+plot(Billing.Amount ~ Duration.of.Hospitalization, data = clean_dat1, 
+     main = "Billing by Duration", col = "#54B84C")
+plot(Billing.Amount ~ Medical.Condition, data = clean_dat1, 
+     main = "Billing by Condition", col = "#6F9BF8")
+
+par(mfrow = c(1, 1))
+
+# Second run bivariate models
+
+# 1. Effect of Time alone
+
+# Run the updated bivariate model
+model_year <- lm(Billing.Amount ~ Admission_Year, data = clean_dat1)
+summary(model_year)
+
+# 2. Effect of Hospitalization Duration alone
+model_duration <- lm(Billing.Amount ~ Duration.of.Hospitalization, data = clean_dat1)
+summary(model_duration)
+
+# 3. Effect of Medical Condition alone
+model_condition <- lm(Billing.Amount ~ Medical.Condition, data = clean_dat1)
+summary(model_condition)
+
+# Then combined model
+model_combined <- lm(Billing.Amount ~ Admission_Year + Duration.of.Hospitalization + Medical.Condition, data = clean_dat1)
+summary(model_combined)
+
+```
+
+# Task 3
+The following tasks refer to: Exam data 6 1.csv
+1. For this task remove all observations with inconclusive test results.
+2. Fit a logistic regression model with test result as the dependent outcome. You are free to choose which
+independent variables to include.
+```{r task3}
+
+# 3.1 Remove all observations with inconclusive test results
+dat1_conclusive <- clean_dat1[clean_dat1$Test.Results != "Inconclusive", ]
+dat1_conclusive$Test.Results <- droplevels(dat1_conclusive$Test.Results)
+
+# Check remaining levels
+table(dat1_conclusive$Test.Results)
+
+# 3.2  Logistic regression with the test result as outcome
+# Create binary outcome: 1 = Abnormal, 0 = Normal
+dat1_conclusive$Test_binary <- 0
+dat1_conclusive[dat1_conclusive$Test.Results == "Abnormal", "Test_binary"] <- 1
+
+# Fit logistic regression: use age, gender, medical condition, admission type, duration
+mod_logit <- glm(Test_binary ~ Age + Gender + Medical.Condition +
+                   Admission.Type + Duration.of.Hospitalization,
+                 data = dat1_conclusive,
+                 family = binomial)
+summary(mod_logit)
+
+# Alternative model with fewer predictors
+mod_logit2 <- glm(Test_binary ~ Age + Medical.Condition + Duration.of.Hospitalization,
+                  data = dat1_conclusive,
+                  family = binomial)
+summary(mod_logit2)
+
+# Compare AIC of both models
+AIC(mod_logit, mod_logit2)
+anova(mod_logit2, mod_logit, test = "LRT") 
+
+```
+
+# Task 4
+The following tasks refer to: Exam data 6 2.csv
+Income analysis:
+1. Is there an association between the income level and the distance to the hospital?
+2. Are there any clinical variables which differ significantly between income levels?
+3. How is age distributed in each income level?
+```{r task4}
+# 4.1 Association between income level and distance to the hospital?
+ggplot(clean_dat2, aes(x = income_level, y = distance_to_hospital_km, fill = income_level)) +
+  geom_boxplot() +
+  ggtitle("Distance to Hospital by Income Level") +
+  theme_bw()
+
+# Mean distance per income level
+tapply(clean_dat2$distance_to_hospital_km, clean_dat2$income_level, mean)
+
+# income_level has 3 groups, so we use ANOVA
+anova_dist <- aov(distance_to_hospital_km ~ income_level, data = clean_dat2)
+summary(anova_dist)
+
+# 4.2  Are there any clinical variables which differ significantly between income levels?
+summary(aov(bmi             ~ income_level, data = clean_dat2))
+summary(aov(bnp             ~ income_level, data = clean_dat2))
+summary(aov(sodium          ~ income_level, data = clean_dat2))
+summary(aov(creatinine      ~ income_level, data = clean_dat2))
+summary(aov(systolic_bp     ~ income_level, data = clean_dat2))
+summary(aov(heart_rate      ~ income_level, data = clean_dat2))
+summary(aov(adherence_score ~ income_level, data = clean_dat2))
+
+# Nothing is significant, lets just visualize one with lower p-value
+ggplot(clean_dat2, aes(x = income_level, y = systolic_bp, fill = income_level)) +
+  geom_boxplot() +
+  ggtitle("Systolic BP by Income Level") +
+  theme_bw()
+
+# 4.3 How is age distributed in each income level?
+ggplot(clean_dat2, aes(x = age, fill = income_level)) +
+  geom_histogram(binwidth = 5, color = "white") +
+  facet_wrap(~ income_level) +
+  ggtitle("Age Distribution by Income Level") +
+  theme_bw()
+
+# Summary statistics
+tapply(clean_dat2$age, clean_dat2$income_level, summary)
+
+```
+
+# Task 5
+The following tasks refer to: Exam data 6 2.csv
+Readmission prediction:
+1. Try to predict which patients are readmitted to the hospital.
+2. Try different model specifications and discuss them.
+3. Which variables are most important?
+```{r task5}
+colSums(is.na(dat2)) # 92 NAs in bmi, 90 NAs in sodium, 108 NAs in creatinine
+dat2_lossall <- dat2[is.na(dat2$bmi) & is.na(dat2$sodium) & is.na(dat2$creatinine),] 
+nrow(dat2_lossall)
+dat2_loss2 <- dat2[is.na(dat2$creatinine) & is.na(dat2$sodium),]
+nrow(dat2_loss2)
+# bmi&c: 0; sodium&c: 5;  sodium&bmi: 5; bmi&c&sodium: 0; total missing: 280 
+
+# create dataset for machine learning
+## drop patient_id
+dat2_ml <- dat2[,-1]
+# Order the income factor levels properly
+dat2_ml$income_level <- factor(dat2_ml$income_level,
+                                  levels = c("Low", "Medium", "High"),
+                                  ordered = TRUE)
+
+# Train/Test split (80/20)
+set.seed(500)
+sample_size <- floor(0.8 * nrow(dat2_ml))
+train_indices <- sample(seq_len(nrow(dat2_ml)), size = sample_size)
+
+# impute the missing data
+ignore <- rep(FALSE, nrow(dat2_ml))
+ignore[-train_indices] <- TRUE
+set.seed(123)
+imputation <- mice(dat2_ml, m = 1, method = 'pmm', 
+                   ignore = ignore, printFlag = FALSE)
+dat2_ml <- complete(imputation, 1)
+train_dat <- dat2_ml[train_indices, ]
+test_dat <- dat2_ml[-train_indices, ]
+
+# First Model : Logistic Regression
+
+# Checking multicollinearity
+num_vars <- train_dat[, c("age", "distance_to_hospital_km", "bmi", "bnp", 
+                          "sodium", "creatinine", "systolic_bp", "heart_rate", 
+                          "adherence_score")]
+cor_matrix <- cor(num_vars, use = "complete.obs")
+round(cor_matrix, 2) # all look safe
+
+# Stepwise Selection
+model_all <- glm(readmitted_30d ~ ., data = train_dat, family = binomial)
+model_sele <- step(model_all, direction = "both", trace = FALSE)
+summary(model_sele)
+
+# Hierarchical Models & ANOVA Block Testing
+# Block 1: Baseline Characteristics
+model1 <- glm(readmitted_30d ~ age, data = train_dat, family = binomial) #AIC:3227.6 
+model2 <- glm(readmitted_30d ~ age + distance_to_hospital_km, data = train_dat, family = binomial) #AIC:3220.2
+anova(model1, model2, test = "LRT") 
+
+# Block 2: Add Labs (physiological markers)
+model3 <- glm(readmitted_30d ~ age + distance_to_hospital_km + bnp + sodium +
+                creatinine, data = train_dat, family = binomial) #AIC:3152.1
+anova(model2, model3, test = "LRT") 
+
+model3.1 <- glm(readmitted_30d ~ age + distance_to_hospital_km + bnp + sodium + creatinine +
+                systolic_bp + heart_rate, 
+              data = train_dat, family = binomial) #AIC: 3148.2
+anova(model3, model3.1, test = "LRT") #choose 3.1
+
+# Block 3: Add Medications
+model4 <- glm(readmitted_30d ~ age + distance_to_hospital_km + bnp + sodium + creatinine +
+                systolic_bp + heart_rate + ace_inhibitor + beta_blocker,
+                data = train_dat, family = binomial) #AIC:3113.9
+anova(model3.1, model4, test = "LRT") 
+
+# Block 4: Add Behavior
+model5 <- glm(readmitted_30d ~ age + distance_to_hospital_km + bnp + sodium + creatinine +
+                systolic_bp + heart_rate +
+                ace_inhibitor + beta_blocker + adherence_score, 
+                data = train_dat, family = binomial) #AIC:3037.1
+anova(model4, model5, test = "LRT") 
+
+#drop systolic bp and heart rate
+model5.1 <- glm(readmitted_30d ~ age + distance_to_hospital_km + bnp + sodium + creatinine +
+                ace_inhibitor + beta_blocker + adherence_score, 
+                data = train_dat, family = binomial) #AIC:3038.9
+
+anova(model5.1, model5, test = "LRT") 
+#model5 doesn't significant improve the model, choose model 5.1
+
+# Interaction checks (both were non-significant >> choose model5)
+
+# Case A: Does patient age modify the effect of medication adherence?
+model_int_age <- update(model5.1, . ~ . + age:adherence_score) #AIC:3040.8
+anova(model5.1, model_int_age, test = "LRT") 
+
+# Case B: Does diuretic use alter the risk context of blood sodium levels?
+model_int_sod <- update(model5.1, . ~ . + diuretic:sodium) #AIC:3039.3
+anova(model5.1, model_int_sod, test = "LRT") 
+
+# Model Outputs & Tables
+tab_model(model2, model3.1, model4,  model5, model5.1, model_int_age, model_int_sod,
+           show.ci = FALSE, show.aic = TRUE, p.style = "numeric_stars")
+
+vif(model5.1) # check multicollinearity (all variance inflation factor near 1.0)
+
+
+# the final one is model 5.1
+model_lr <- model5.1
+
+# Second Model: Random Forest
+set.seed(42)
+#default model
+model500 <- randomForest(readmitted_30d ~ ., data = train_dat, proximity=FALSE)
+
+oob.error.data500 <- data.frame(
+  Trees=rep(1:nrow(model500$err.rate), times=3),
+  Type=rep(c("OOB", "notreadmitted", "readmitted"), each=nrow(model500$err.rate)),
+  Error=c(model500$err.rate[,"OOB"], 
+          model500$err.rate[,"0"], 
+          model500$err.rate[,"1"]))
+
+ggplot(data = oob.error.data500, aes(x = Trees, y = Error)) +
+  geom_line(aes(color = Type)) +
+  theme_bw() +
+  labs(title = "OOB Error Convergence Profile (500 Trees)")
+
+#check how many tree is better
+model1000 <- randomForest(readmitted_30d ~ ., data = train_dat,
+                          ntree = 1000, proximity=FALSE) 
+oob.error.data1000 <- data.frame(
+  Trees=rep(1:nrow(model1000$err.rate), times=3),
+  Type=rep(c("OOB", "notreadmitted", "readmitted"), each=nrow(model1000$err.rate)),
+  Error=c(model1000$err.rate[,"OOB"], 
+          model1000$err.rate[,"0"], 
+          model1000$err.rate[,"1"]))
+
+ggplot(data = oob.error.data1000, aes(x = Trees, y = Error)) +
+  geom_line(aes(color = Type)) +
+  theme_bw() +
+  labs(title = "OOB Error Convergence Profile (1000 Trees)") # no significant leap >> keep default tree
+
+# Tune mtry
+max_pred <- ncol(train_dat)-1
+oob.values <- vector(length=max_pred) 
+
+set.seed(233)
+for(i in 1:max_pred) {
+  temp.model <- randomForest(readmitted_30d ~ ., mtry=i,
+                             data = train_dat, proximity=FALSE)
+  oob.values[i] <- temp.model$err.rate[nrow(temp.model$err.rate), "OOB"]
+}
+oob.values #again no big difference >> use default setting
+
+# Final Model Definition
+set.seed(42)
+model_rf <- randomForest(readmitted_30d ~ . ,data = train_dat, proximity=FALSE)
+
+# Model Evaluation on Test Set
+log_preds <- predict(model_lr, newdata = test_dat, type = "response")
+rf_preds <- predict(model_rf, newdata = test_dat, type = "prob")[, "1"]
+
+# Optimize threshold
+log_roc <- roc(test_dat$readmitted_30d, log_preds, quiet = TRUE, percent = TRUE)
+rf_roc <- roc(test_dat$readmitted_30d, rf_preds, quiet = TRUE, percent = TRUE)
+log_opt <- coords(log_roc, "best", ret = c("threshold", "specificity", "sensitivity"), best.method = "youden")
+rf_opt <- coords(rf_roc, "best", ret = c("threshold", "specificity", "sensitivity"), best.method = "youden")
+
+# Using clinical cutoff threshold of 0.40
+log_outcome <- ifelse(log_preds > 0.4, 1, 0)
+rf_outcome <- ifelse(rf_preds > 0.4, 1, 0)
+log_comp_tab <- table(Predicted = log_outcome, Actual = test_dat$readmitted_30d)
+rf_comp_tab <- table(Predicted = rf_outcome, Actual = test_dat$readmitted_30d)
+
+# Compute final metrics
+log_t_positive <- log_comp_tab["1", "1"]
+log_t_negative <- log_comp_tab["0", "0"]
+log_f_positive <- log_comp_tab["1", "0"]
+log_f_negative <- log_comp_tab["0", "1"]
+
+log_accuracy    <- (log_t_positive + log_t_negative) / sum(log_comp_tab)
+log_sensitivity <- log_t_positive / (log_t_positive + log_f_negative)
+log_specificity <- log_t_negative / (log_t_negative + log_f_positive)
+
+rf_t_positive <- rf_comp_tab["1", "1"]
+rf_t_negative <- rf_comp_tab["0", "0"]
+rf_f_positive <- rf_comp_tab["1", "0"]
+rf_f_negative <- rf_comp_tab["0", "1"]
+
+rf_accuracy    <- (rf_t_positive + rf_t_negative) / sum(rf_comp_tab)
+rf_sensitivity <- rf_t_positive / (rf_t_positive + rf_f_negative)
+rf_specificity <- rf_t_negative / (rf_t_negative + rf_f_positive)
+
+# Comparison
+cat("\n--- Logistic Regression PERFORMANCE (THRESHOLD = 0.4) ---\n",
+    "Accuracy    : ", round(log_accuracy, 4), "\n",
+    "Sensitivity : ", round(log_sensitivity, 4), "\n",
+    "Specificity : ", round(log_specificity, 4), "\n")
+cat("\n--- RANDOM FOREST PERFORMANCE (THRESHOLD = 0.4) ---\n",
+    "Accuracy    : ", round(rf_accuracy, 4), "\n",
+    "Sensitivity : ", round(rf_sensitivity, 4), "\n",
+    "Specificity : ", round(rf_specificity, 4), "\n")
+
+# ROC Curve & AUC
+ggroc(list(Logistic = log_roc, `Random Forest` = rf_roc), legacy.axes = TRUE, linewidth = 1.2) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "grey50") +
+  theme_bw() +
+  scale_color_manual(values = c("Logistic" = "#377eb8", "Random Forest" = "#e41a1c")) +
+  labs(title = "ROC Curve Comparison",
+       subtitle = paste0("Logistic AUC = ", round(log_roc$auc, 2), 
+                         " | Random Forest AUC = ", round(rf_roc$auc, 2)),
+       x = "False Positive Percentage (1 - Specificity)",
+       y = "True Positive Percentage (Sensitivity)",
+       color = "Model Specification")
+
+# Variable Importance Plot (OR and absolute z-values)
+tbl_regression(model_lr, exponentiate = TRUE) #creat summary table
+
+coef_mod <- summary(model_lr)$coefficients[-1, ]
+z_df <- data.frame(
+  Variable = rownames(coef_mod),
+  Importance = abs(coef_mod[, "z value"])
+)
+
+ggplot(z_df, aes(x = reorder(Variable, Importance), y = Importance)) +
+  geom_col(fill = "#377eb8", width = 0.6) +                  
+  geom_text(aes(label = round(Importance, 2)),hjust = -0.2, size = 4) +
+  coord_flip() +
+  theme_bw() +                               
+  labs(title = "Variable Importance (Absolute z-values)", x = NULL, y = "z-value") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+
+```
+
+
+
+
