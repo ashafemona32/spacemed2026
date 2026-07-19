@@ -1,31 +1,44 @@
-# Welcome to 2026 Course of Data Literacy 
+# SpaceMed 2026
 
-This file uses [markdown](https://www.markdownguide.org/). Checkout the
-[cheat sheet](https://www.markdownguide.org/cheat-sheet/) for a summary
-of the syntax. GitLab supports various
-[Markdown extensions](https://docs.gitlab.com/user/markdown/)
+Welcome to my repository dedicated to biomedical data analysis, neuroimaging pipelines, and projects developed during the Germany semster of Erasmus Mundus Joint Master in Space Medicine. 
 
-## About me
-Hi there, I'm Sammy 👋 I am a Master's student currently specialising in **Space Medicine**.
-* Currently based in Germany :de:
-* Program: Erasmus
-## How to reach me
-📬 Email: shan-shan.chen@charite.de 
+## 👩‍🔬 About Me
+Hi, I'm **Sammy (Shan-Shan) Chen** 👋 
+*   **Current Role:** M.Sc. Student specializing in **Space Medicine**.
+*   **Background:** Licensed Occupational Therapist (B.Sc., National Taiwan University) | Clinical Neuro-rehabilitation & Human Performance.
+*   **Contact:** 📧 [shan-shan.chen@charite.de](mailto:shan-shan.chen@charite.de)
 
-# In this course we developed a package -- spacemed
-`spacemed` is a Python package designed for processing and analyzing medical pulse data.
-It provides tools to load raw signal data, detect physiological peaks,and calculate
-heart rate metrics.
+---
 
-## Core Functions of spacemed
+## Core Project: `spacemed` Python Package
+`spacemed` is a custom-built Python package designed for automated processing, feature extraction, and analysis of physiological signal data (e.g., medical pulse and hemodynamic signals). 
 
-|Function               |Description                                                    |
-|-----------------------|---------------------------------------------------------------|
-|`readPulse(file_name)` |Reads a CSV file and returns `time`  and `absorption` lists.   |
-|`findPeaks(time, absorption)` |Uses signal processing to identify local maxima (peaks).|
-|`calHR(time, peaks)` |Calculates heart rate based on the time intervals between peaks.  |
-|`plotHR(hr)` |Plot heart rates with x, y labels and a title.|
-|`fmriCross(input_sig, output_fmri, voxel_num)` | Computes cross-correlation between the input signal and voxel time series, returning correlation and time lag.|
+### Pipeline & Core Functions
 
-## Current version
-Current version is `0.0.1`.
+| Function | Input/Parameters | Description |
+| :--- | :--- | :--- |
+| `readPulse` | `file_name` | Efficiently parses raw physiological data (CSV) and extracts time-series matrices (`time`, `absorption`). |
+| `findPeaks` | `time`, `absorption` | Applies digital signal processing (DSP) algorithms to identify local maxima (physiological peaks) and filter artifacts. |
+| `calHR` | `time`, `peaks` | Quantifies instantaneous heart rate metrics based on inter-beat intervals (IBI). |
+| `plotHR` | `hr` | Generates standardized, publication-ready visual plots for physiological timelines. |
+| `fmriCross` | `input_sig`, `output_fmri`, `voxel_num` | Computes mathematical **cross-correlation and time lags** between peripheral physiological signals and fMRI voxel time series (crucial for BOLD signal artifact removal and coupling analysis). |
+
+*Current Release Version: `0.0.3`*
+
+---
+
+## Parallel Research Projects
+
+### Cardiorespiratory Dynamics: ECG Signal Processing
+*   **Overview:** Developed a complete end-to-end processing pipeline to transform noisy, raw ECG voltage signals into clean, analyzed data structures.
+*   **My Technical Contribution:** Responsible for the entire technical implementation, including pipeline engineering, digital signal processing (DSP), and the complete Python notebook development using `Neurokit2` to extract Heart Rate Variability (HRV) indices.
+*   **Team Credits:** Team members contributed to the literature review and written research proposal report.
+
+### Advanced Biostatistics & Predictive Modeling (R Framework)
+*   **Overview:** A collaborative comprehensive analytics project examining multidimensional clinical datasets, patient baseline demographics, and hospital readmission risk factors. 
+*   **Team Credits:** Jointly developed by Alice, Kseniia, and Me.
+*   **My Specific Contribution (Task 5):** Independently designed and executed the Advanced Readmission Prediction Pipeline.
+    *   Implemented a **Predictive Mean Matching (PMM)** imputation pipeline via the `mice` package to handle sparse physiological data.
+    *   Engineered a step-wise hierarchical model testing framework, conducting **Likelihood Ratio Tests (LRT)** and diagnosing multicollinearity via **VIF** profiles.
+    *   Deployed a **Random Forest** classifier, executed Out-Of-Bag (OOB) error convergence profiling, and tuned optimization parameters (`mtry`).
+    *   Optimized clinical classification thresholds using **Youden's Index** and benchmarked final models via **ROC/AUC comparisons** (using `pROC`).
